@@ -334,7 +334,7 @@ function invalidateMaps(){document.querySelectorAll('[data-map]').forEach(el=>{e
 renderPages();buildToc();initFromHash();initMaps();render();
 document.getElementById('next').onclick=()=>go(index+1);document.getElementById('prev').onclick=()=>go(index-1);document.getElementById('scrollHint').onclick=()=>book.children[index].scrollBy({top:Math.max(260,book.children[index].clientHeight*.7),behavior:'smooth'});document.getElementById('modeToggle').onclick=()=>setMode(mode==='scroll'?'flip':'scroll');document.getElementById('tocToggle').onclick=()=>toc.classList.toggle('show');document.getElementById('fullscreen').onclick=()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen?.();document.getElementById('printBtn').onclick=()=>window.print();document.getElementById('shareBtn').onclick=async()=>{const data={title:document.title,text:pages[index].title,url:location.href};if(navigator.share)await navigator.share(data);else navigator.clipboard?.writeText(location.href)};
 document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='PageDown')go(index+1);if(e.key==='ArrowLeft'||e.key==='PageUp')go(index-1);if(e.key==='Escape'){closeLightbox();toc.classList.remove('show')}});
-let sx=0;book.addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});book.addEventListener('touchend',e=>{if(mode==='scroll')return;const dx=e.changedTouches[0].clientX-sx;if(dx<-60)go(index+1);if(dx>60)go(index-1)},{passive:true});
+/* 手动划左/划右切换页面已按用户要求停用；翻页请用底部按钮或左侧目录 */
 window.addEventListener('hashchange',initFromHash);window.addEventListener('resize',()=>{if(window.innerWidth<=760&&mode==='flip')mode='page';invalidateMaps()});
 window.APP={pages,mapData,book,toc,viewer,go,render,renderPages,buildToc,initFromHash,initMaps,invalidateMaps,ensureMap,numberedIcon,get index(){return index},set index(v){index=v},get mode(){return mode}};
 </script>
@@ -862,11 +862,6 @@ body.editing [data-map]{pointer-events:none}
 
 </script>
 <style>
-/* 去掉手动翻页：全程连续滚动 */
-.bottomnav{display:none!important}
-#modeToggle{display:none!important}
-.app{grid-template-rows:64px 1fr!important}
-.viewer.scroll-view{padding-bottom:40px}
 /* 行程条微调：统一高度、不折行 */
 .trip-spine{align-items:stretch;gap:6px}
 .trip-node{min-width:104px;display:flex;flex-direction:column;justify-content:center;padding:10px 12px}
@@ -874,14 +869,4 @@ body.editing [data-map]{pointer-events:none}
 .trip-node small{white-space:nowrap;font-size:10px;line-height:1.3}
 .trip-spine i{align-self:center;flex:0 0 auto}
 </style>
-<script>
-(function(){
-  function apply(){
-    try{ if(window.setMode) window.setMode('scroll'); }catch(e){}
-    var m=document.getElementById('modeToggle'); if(m) m.style.display='none';
-  }
-  if(document.readyState!=='loading') apply();
-  else document.addEventListener('DOMContentLoaded', apply);
-})();
-</script>
 </body></html>
